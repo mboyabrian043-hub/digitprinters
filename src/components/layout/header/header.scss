@@ -15,6 +15,58 @@
             fill: var(--text-prominent);
         }
     }
+
+    &__logout-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 3.6rem;
+        height: 3.6rem;
+        margin-inline-start: 0.8rem;
+        background: transparent;
+        border: 0.1rem solid rgba(255, 255, 255, 0.12);
+        border-radius: 0.8rem;
+        cursor: pointer;
+        color: var(--text-prominent, #ffffff);
+        transition: background 0.18s, border-color 0.18s, color 0.18s;
+        flex-shrink: 0;
+
+        &:hover:not(:disabled) {
+            background: rgba(255, 68, 68, 0.1);
+            border-color: rgba(255, 68, 68, 0.45);
+            color: #ff4444;
+
+            .app-header__logout-icon {
+                stroke: #ff4444;
+            }
+        }
+
+        &:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+    }
+
+    &__logout-icon {
+        stroke: var(--text-prominent, #ffffff);
+        transition: stroke 0.18s;
+        display: block;
+        flex-shrink: 0;
+    }
+
+    &__logout-spinner {
+        width: 1.6rem;
+        height: 1.6rem;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-top-color: #ffffff;
+        border-radius: 50%;
+        animation: logout-spin 0.75s linear infinite;
+        display: block;
+    }
+}
+
+@keyframes logout-spin {
+    to { transform: rotate(360deg); }
 }
 
 .account-switcher {

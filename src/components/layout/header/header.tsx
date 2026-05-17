@@ -40,7 +40,22 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
     const currency = getCurrency?.();
     const { localize } = useTranslations();
 
-    const { isSingleLoggingIn } = useOauth2();
+    const [isLoggingOut, setIsLoggingOut] = React.useState(false);
+    const { isSingleLoggingIn, oAuthLogout } = useOauth2({
+        handleLogout: async () => client?.logout?.(),
+        client,
+    });
+
+    const handleLogout = React.useCallback(async () => {
+        setIsLoggingOut(true);
+        try {
+            await oAuthLogout();
+        } catch (err) {
+            console.error('[Logout] Error during logout:', err);
+        } finally {
+            setIsLoggingOut(false);
+        }
+    }, [oAuthLogout]);
 
     const { hubEnabledCountryList } = useFirebaseCountriesConfig();
     const { onRenderTMBCheck, isTmbEnabled } = useTMB();
@@ -130,6 +145,35 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
                                 </Tooltip>
                             );
                         })()}
+
+                    <Tooltip
+                        as='button'
+                        onClick={handleLogout}
+                        disabled={isLoggingOut}
+                        tooltipContent={isLoggingOut ? localize('Signing out…') : localize('Log out')}
+                        tooltipPosition='bottom'
+                        className='app-header__logout-btn'
+                    >
+                        {isLoggingOut ? (
+                            <span className='app-header__logout-spinner' />
+                        ) : (
+                            <svg
+                                className='app-header__logout-icon'
+                                width='20'
+                                height='20'
+                                viewBox='0 0 24 24'
+                                fill='none'
+                                stroke='currentColor'
+                                strokeWidth='2'
+                                strokeLinecap='round'
+                                strokeLinejoin='round'
+                            >
+                                <path d='M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4' />
+                                <polyline points='16 17 21 12 16 7' />
+                                <line x1='21' y1='12' x2='9' y2='12' />
+                            </svg>
+                        )}
+                    </Tooltip>
                 </>
             );
         } else {
@@ -202,6 +246,8 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
         is_virtual,
         onRenderTMBCheck,
         is_tmb_enabled,
+        handleLogout,
+        isLoggingOut,
     ]);
 
     if (client?.should_hide_header) return null;
