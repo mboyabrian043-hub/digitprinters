@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { requestOidcAuthentication } from '@deriv-com/auth-client';
 import './landing-page.scss';
 
 const REFERRAL_URL = 'https://partner-tracking.deriv.com/click?a=14252&o=1&c=3&link_id=1';
+const DERIV_SIGNUP_URL = 'https://deriv.com/signup/';
 
 const TICKER_ITEMS = [
     { name: 'Volatility 75', value: '1,248.32', change: '+1.24%', up: true },
@@ -45,7 +47,7 @@ const FEATURES = [
     {
         icon: '🚀',
         title: 'Quick Strategies',
-        desc: 'Launch instantly with pre-built strategies like Martingale, D\'Alembert, and Oscar\'s Grind.',
+        desc: "Launch instantly with pre-built strategies like Martingale, D'Alembert, and Oscar's Grind.",
     },
 ];
 
@@ -63,13 +65,20 @@ const MARKETS = [
 const LandingPage = () => {
     const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
         setIsLoggingIn(true);
-        window.location.href = 'https://oauth.deriv.com/oauth2/authorize?app_id=134275&l=en&brand=deriv';
+        try {
+            await requestOidcAuthentication({
+                redirectCallbackUri: `${window.location.origin}/callback`,
+            });
+        } catch (err) {
+            console.error('[Auth] OIDC failed, falling back to OAuth2:', err);
+            window.location.href = `https://oauth.deriv.com/oauth2/authorize?app_id=134275&l=en&brand=deriv`;
+        }
     };
 
     const handleCreateAccount = () => {
-        window.open(REFERRAL_URL, '_blank', 'noopener,noreferrer');
+        window.open(REFERRAL_URL || DERIV_SIGNUP_URL, '_blank', 'noopener,noreferrer');
     };
 
     const duplicatedTicker = [...TICKER_ITEMS, ...TICKER_ITEMS];

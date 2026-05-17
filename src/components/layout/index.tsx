@@ -233,6 +233,11 @@ const Layout = observer(() => {
         }
     }, [isAuthenticating, isInitialAuthCheckComplete]);
 
+    const isUserLoggedIn = (() => {
+        const token = localStorage.getItem('authToken');
+        return !(!token || token === 'null' || token === 'undefined');
+    })();
+
     return (
         <div
             className={clsx('layout', {
@@ -240,11 +245,13 @@ const Layout = observer(() => {
                 'quick-strategy-active': is_quick_strategy_active && !isDesktop,
             })}
         >
-            {!isCallbackPage && <AppHeader isAuthenticating={isAuthenticating || !isInitialAuthCheckComplete} />}
+            {!isCallbackPage && isUserLoggedIn && (
+                <AppHeader isAuthenticating={isAuthenticating || !isInitialAuthCheckComplete} />
+            )}
             <Body>
                 <Outlet />
             </Body>
-            {!isCallbackPage && isDesktop && <Footer />}
+            {!isCallbackPage && isDesktop && isUserLoggedIn && <Footer />}
             <PWAUpdateNotification />
         </div>
     );
