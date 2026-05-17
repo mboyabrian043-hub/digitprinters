@@ -16,7 +16,7 @@
         "test:fix": "prettier --log-level silent --write . && eslint --fix \"./src/**/*.?(js|jsx|ts|tsx)\"",
         "test": "jest",
         "coverage": "jest --coverage",
-        "prepare": "husky install",
+        "prepare": "echo 'skipping husky in replit'",
         "build:analyze": "BUNDLE_ANALYZE=true rsbuild build"
     },
     "dependencies": {
@@ -49,6 +49,7 @@
         "formik": "^2.4.6",
         "framer-motion": "^6.5.1",
         "html-react-parser": "^5.1.18",
+        "i18next": "^26.2.0",
         "js-cookie": "^3.0.5",
         "localforage": "^1.10.0",
         "lz-string": "^1.5.0",
@@ -60,6 +61,7 @@
         "react-content-loader": "^7.0.0",
         "react-div-100vh": "^0.3.8",
         "react-dom": "^18.3.1",
+        "react-i18next": "^17.0.8",
         "react-joyride": "^2.8.2",
         "react-loadable": "^5.5.0",
         "react-router-dom": "^6.30.3",

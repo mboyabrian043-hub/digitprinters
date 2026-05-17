@@ -27,7 +27,7 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npx rsbuild dev"
+args = "npm install --legacy-peer-deps && npm run start"
 waitForPort = 5000
 
 [[ports]]
