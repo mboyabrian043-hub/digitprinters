@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { requestOidcAuthentication } from '@deriv-com/auth-client';
-import { handleOidcAuthFailure } from '@/utils/auth-utils';
 import './landing-page.scss';
 
 const REFERRAL_URL = 'https://partner-tracking.deriv.com/click?a=14252&o=1&c=3&link_id=1';
@@ -65,16 +63,9 @@ const MARKETS = [
 const LandingPage = () => {
     const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-    const handleLogin = async () => {
+    const handleLogin = () => {
         setIsLoggingIn(true);
-        try {
-            await requestOidcAuthentication({
-                redirectCallbackUri: `${window.location.origin}/callback`,
-            });
-        } catch (err) {
-            handleOidcAuthFailure(err);
-            setIsLoggingIn(false);
-        }
+        window.location.href = 'https://oauth.deriv.com/oauth2/authorize?app_id=134275&l=en&brand=deriv';
     };
 
     const handleCreateAccount = () => {
