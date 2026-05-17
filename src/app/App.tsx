@@ -8,6 +8,7 @@ import { crypto_currencies_display_order, fiat_currencies_display_order } from '
 import { useOfflineDetection } from '@/hooks/useOfflineDetection';
 import { StoreProvider } from '@/hooks/useStore';
 import CallbackPage from '@/pages/callback';
+import LandingPage from '@/pages/landing';
 import Endpoint from '@/pages/endpoint';
 import { TAuthData } from '@/types/api-types';
 import { initializeI18n, localize, TranslationProvider } from '@deriv-com/translations';
@@ -24,16 +25,50 @@ const i18nInstance = initializeI18n({
     cdnUrl: `${TRANSLATIONS_CDN_URL}/${R2_PROJECT_NAME}/${CROWDIN_BRANCH_NAME}`,
 });
 
-// Simple Suspense wrapper without timeout that causes dark landing page
 const SuspenseWrapper = ({ children }: { children: React.ReactNode }) => {
     const { isOnline } = useOfflineDetection();
-
     const getLoadingMessage = () => {
         if (!isOnline) return localize('Loading offline dashboard...');
         return localize('Please wait while we connect to the server...');
     };
-
     return <Suspense fallback={<ChunkLoader message={getLoadingMessage()} />}>{children}</Suspense>;
+};
+
+const isUserLoggedIn = () => {
+    const token = localStorage.getItem('authToken');
+    if (!token || token === 'null' || token === 'undefined') return false;
+    const url_params = new URLSearchParams(window.location.search);
+    if (url_params.has('account')) return true;
+    const accounts = localStorage.getItem('accountsList');
+    try {
+        const parsed = JSON.parse(accounts || '{}');
+        return Object.keys(parsed).length > 0;
+    } catch {
+        return !!token;
+    }
+};
+
+/**
+ * AuthGate renders EITHER the clean landing page (no Deriv header/layout)
+ * OR the full app Layout — never both at the same time.
+ * This prevents the Deriv AppHeader from appearing on the landing page.
+ */
+const AuthGate = () => {
+    const path = window.location.pathname;
+    const isCallbackPath = path === '/callback' || path === '/auth/callback';
+
+    // Callback pages need the full provider tree to process OAuth tokens
+    if (isCallbackPath) {
+        return <Layout />;
+    }
+
+    // Not logged in → show standalone landing page, no Deriv header
+    if (!isUserLoggedIn()) {
+        return <LandingPage />;
+    }
+
+    // Logged in → show full bot dashboard with Deriv header
+    return <Layout />;
 };
 
 const router = createBrowserRouter(
@@ -46,14 +81,13 @@ const router = createBrowserRouter(
                         <StoreProvider>
                             <RoutePromptDialog />
                             <CoreStoreProvider>
-                                <Layout />
+                                <AuthGate />
                             </CoreStoreProvider>
                         </StoreProvider>
                     </TranslationProvider>
                 </SuspenseWrapper>
             }
         >
-            {/* All child routes will be passed as children to Layout */}
             <Route index element={<AppRoot />} />
             <Route path='endpoint' element={<Endpoint />} />
             <Route path='callback' element={<CallbackPage />} />
@@ -66,13 +100,9 @@ const router = createBrowserRouter(
 
 function App() {
     React.useEffect(() => {
-        // Use the invalid token handler hook to automatically retrigger OIDC authentication
-        // when an invalid token is detected and the cookie logged state is true
-
         initSurvicate();
         window?.dataLayer?.push({ event: 'page_load' });
         return () => {
-            // Clean up the invalid token handler when the component unmounts
             const survicate_box = document.getElementById('survicate-box');
             if (survicate_box) {
                 survicate_box.style.display = 'none';
@@ -100,10 +130,8 @@ function App() {
                 localStorage.setItem('active_loginid', loginid);
             };
 
-            // Handle demo account
             if (account_currency?.toUpperCase() === 'DEMO') {
                 const demo_account = Object.entries(parsed_accounts).find(([key]) => key.startsWith('VR'));
-
                 if (demo_account) {
                     const [loginid, token] = demo_account;
                     updateLocalStorage(String(token), loginid);
@@ -111,13 +139,11 @@ function App() {
                 }
             }
 
-            // Handle real account with valid currency
             if (account_currency?.toUpperCase() !== 'DEMO' && is_valid_currency) {
                 const real_account = Object.entries(parsed_client_accounts).find(
                     ([loginid, account]) =>
                         !loginid.startsWith('VR') && account.currency.toUpperCase() === account_currency?.toUpperCase()
                 );
-
                 if (real_account) {
                     const [loginid, account] = real_account;
                     if ('token' in account) {

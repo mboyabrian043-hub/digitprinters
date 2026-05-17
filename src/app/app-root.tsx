@@ -6,7 +6,6 @@ import ChunkLoader from '@/components/loader/chunk-loader';
 import { api_base } from '@/external/bot-skeleton';
 import { useStore } from '@/hooks/useStore';
 import useTMB from '@/hooks/useTMB';
-import LandingPage from '@/pages/landing';
 import { localize } from '@deriv-com/translations';
 import './app-root.scss';
 
@@ -35,21 +34,7 @@ const ErrorComponentWrapper = observer(() => {
     );
 });
 
-const isUserLoggedIn = () => {
-    const token = localStorage.getItem('authToken');
-    if (!token || token === 'null' || token === 'undefined') return false;
-    const url_params = new URLSearchParams(window.location.search);
-    if (url_params.has('account')) return true;
-    const accounts = localStorage.getItem('accountsList');
-    try {
-        const parsed = JSON.parse(accounts || '{}');
-        return Object.keys(parsed).length > 0;
-    } catch {
-        return !!token;
-    }
-};
-
-const BotDashboard = () => {
+const AppRoot = () => {
     const store = useStore();
     const api_base_initialized = useRef(false);
     const [is_api_initialized, setIsApiInitialized] = useState(false);
@@ -69,19 +54,14 @@ const BotDashboard = () => {
                 setIsTmbCheckComplete(true);
             }
         };
-
         checkTmbStatus();
     }, []);
 
     useEffect(() => {
-        if (!is_tmb_check_complete) {
-            return;
-        }
+        if (!is_tmb_check_complete) return;
 
         const timeoutId = setTimeout(() => {
-            if (!is_api_initialized) {
-                setIsApiInitialized(true);
-            }
+            if (!is_api_initialized) setIsApiInitialized(true);
         }, 5000);
 
         const initializeApi = async () => {
@@ -113,13 +93,6 @@ const BotDashboard = () => {
             </ErrorBoundary>
         </Suspense>
     );
-};
-
-const AppRoot = () => {
-    if (!isUserLoggedIn()) {
-        return <LandingPage />;
-    }
-    return <BotDashboard />;
 };
 
 export default AppRoot;
