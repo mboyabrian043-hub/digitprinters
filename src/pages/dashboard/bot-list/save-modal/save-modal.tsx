@@ -15,7 +15,7 @@ import {
     DerivLightGoogleDriveIcon,
     DerivLightLocalDeviceIcon,
     DerivLightMyComputerIcon,
-} from '@deriv/quill-icons/Illustration';
+} from '@/utils/icons-compat';
 import { localize } from '@deriv-com/translations';
 import { useDevice } from '@deriv-com/ui';
 import IconRadio from './icon-radio';

@@ -6,6 +6,7 @@ import ChunkLoader from '@/components/loader/chunk-loader';
 import { api_base } from '@/external/bot-skeleton';
 import { useStore } from '@/hooks/useStore';
 import useTMB from '@/hooks/useTMB';
+import LandingPage from '@/pages/landing';
 import { localize } from '@deriv-com/translations';
 import './app-root.scss';
 
@@ -34,7 +35,21 @@ const ErrorComponentWrapper = observer(() => {
     );
 });
 
-const AppRoot = () => {
+const isUserLoggedIn = () => {
+    const token = localStorage.getItem('authToken');
+    if (!token || token === 'null' || token === 'undefined') return false;
+    const url_params = new URLSearchParams(window.location.search);
+    if (url_params.has('account')) return true;
+    const accounts = localStorage.getItem('accountsList');
+    try {
+        const parsed = JSON.parse(accounts || '{}');
+        return Object.keys(parsed).length > 0;
+    } catch {
+        return !!token;
+    }
+};
+
+const BotDashboard = () => {
     const store = useStore();
     const api_base_initialized = useRef(false);
     const [is_api_initialized, setIsApiInitialized] = useState(false);
@@ -42,15 +57,12 @@ const AppRoot = () => {
     const [, setIsTmbEnabled] = useState(false);
     const { isTmbEnabled } = useTMB();
 
-    // Effect to check TMB status - independent of API initialization
     useEffect(() => {
         const checkTmbStatus = async () => {
             try {
                 const tmb_status = await isTmbEnabled();
                 const final_status = tmb_status || window.is_tmb_enabled === true;
-
                 setIsTmbEnabled(final_status);
-
                 setIsTmbCheckComplete(true);
             } catch (error) {
                 console.error('TMB check failed:', error);
@@ -61,10 +73,9 @@ const AppRoot = () => {
         checkTmbStatus();
     }, []);
 
-    // Initialize API when TMB check is complete with timeout fallback
     useEffect(() => {
         if (!is_tmb_check_complete) {
-            return; // Wait until TMB check is complete
+            return;
         }
 
         const timeoutId = setTimeout(() => {
@@ -83,7 +94,7 @@ const AppRoot = () => {
                     api_base_initialized.current = false;
                 } finally {
                     setIsApiInitialized(true);
-                    clearTimeout(timeoutId); // Clear timeout if API init completes
+                    clearTimeout(timeoutId);
                 }
             }
         };
@@ -102,6 +113,13 @@ const AppRoot = () => {
             </ErrorBoundary>
         </Suspense>
     );
+};
+
+const AppRoot = () => {
+    if (!isUserLoggedIn()) {
+        return <LandingPage />;
+    }
+    return <BotDashboard />;
 };
 
 export default AppRoot;

@@ -14,7 +14,7 @@ import {
     DerivLightLocalDeviceIcon,
     DerivLightMyComputerIcon,
     DerivLightQuickStrategyIcon,
-} from '@deriv/quill-icons/Illustration';
+} from '@/utils/icons-compat';
 import { Localize, localize } from '@deriv-com/translations';
 import { useDevice } from '@deriv-com/ui';
 import { rudderStackSendOpenEvent } from '../../analytics/rudderstack-common-events';

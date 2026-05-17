@@ -1,0 +1,125 @@
+Implement and transform this forked repository into a fully functional Deriv third-party trading platform called DigitPrinters.
+
+Production domain:
+https://www.digitprinters.site
+
+Main Requirements:
+
+* modern professional UI
+* fully working Deriv OAuth login
+* support both legacy Deriv APIs and new Deriv APIs
+* synthetic indices trading support
+* responsive trading dashboard
+* production-ready architecture
+
+IMPORTANT HYBRID ARCHITECTURE:
+
+1. Use NEW Deriv OAuth credentials for authentication.
+
+OAuth Client ID:
+332LK4VWd9A4pEEfTMn53
+
+2. Use LEGACY numeric app ID for websocket compatibility and trading:
+
+134275
+
+3. OAuth redirect URI:
+   https://www.digitprinters.site/auth/callback
+
+4. Use official OAuth endpoint:
+   https://oauth.deriv.com/oauth2/authorize
+
+5. Users MUST see:
+
+* Authorize Application
+* requested scopes
+* consent screen
+
+before redirecting back.
+
+6. After successful OAuth callback:
+
+* parse authorization response
+* store authenticated session
+* initialize websocket session
+* redirect users to dashboard automatically
+
+7. Connect websocket using:
+   wss://ws.derivws.com/websockets/v3?app_id=134275
+
+8. Fetch and display:
+
+* real accounts
+* demo accounts
+* balances
+* currencies
+* login IDs
+* active account
+
+9. Build a real Deriv-style dashboard including:
+
+* sidebar navigation
+* real/demo account switcher
+* balance cards
+* synthetic indices list
+* chart container
+* open positions
+* trade history
+* active trades
+* buy/sell controls
+* stake input
+* duration selector
+
+10. Support synthetic markets:
+
+* Volatility indices
+* Boom/Crash
+* Jump indices
+
+11. Implement market subscriptions and live ticks.
+
+12. Add TradingView or lightweight charts integration.
+
+13. Create proper authentication system using:
+
+* AuthContext
+* Protected routes
+* persistent login state
+* session restoration
+
+14. Prevent:
+
+* redirect loops
+* blank pages
+* missing callback issues
+* websocket race conditions
+
+15. Configure Vercel-compatible React SPA routing using:
+    vercel.json rewrites
+
+16. Add loading states:
+
+* Authenticating...
+* Connecting to markets...
+* Loading balances...
+
+17. Referral tracking:
+    Use this referral link ONLY for “Create Account” actions:
+    https://partner-tracking.deriv.com/click?a=14252&o=1&c=3&link_id=1
+
+18. Keep branding as:
+    DigitPrinters
+
+19. Create a professional trading landing page with:
+
+* DigitPrinters logo
+* catchy trading caption
+* Login with Deriv button
+* Create Account button
+* clean dark trading theme
+
+20. Ensure production readiness for:
+    https://www.digitprinters.site
+
+21. Do NOT rewrite the entire project unnecessarily.
+    Preserve existing working structure and carefully fix missing functionality.

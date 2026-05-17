@@ -9,29 +9,29 @@
         <link rel="manifest" href="/manifest.json" />
 
         <!-- PWA Meta Tags -->
-        <meta name="theme-color" content="#ff444f" />
+        <meta name="theme-color" content="#00cc69" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Deriv Bot" />
+        <meta name="apple-mobile-web-app-title" content="DigitPrinters" />
         <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="msapplication-TileColor" content="#ff444f" />
+        <meta name="msapplication-TileColor" content="#00cc69" />
         <meta name="msapplication-tap-highlight" content="no" />
 
         <!-- Apple Touch Icons -->
         <link rel="apple-touch-icon" href="/assets/icons/pwa/icon-152x152.png" />
         <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/pwa/icon-152x152.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/pwa/icon-192x192.png" />
-        <meta name="title" content="Build a trading bot without coding | Deriv Bot." />
+        <meta name="title" content="DigitPrinters — Automated Trading Platform" />
         <meta
             name="description"
-            content="Import your current bot or learn how to create a trading bot from scratch with our detailed guides, FAQs, and tutorials. Start with a quick strategy!"
+            content="Build and run automated trading bots on Deriv's synthetic indices, forex, and crypto markets. No coding required. Start trading algorithmically today."
         />
-        <meta property="og:title" content="Deriv Bot" />
+        <meta property="og:title" content="DigitPrinters — Automated Trading Platform" />
         <meta
             property="og:description"
-            content="Import your current bot or learn how to create a trading bot from scratch with our detailed guides, FAQs, and tutorials. Start with a quick strategy!"
+            content="Build and run automated trading bots on Deriv's synthetic indices, forex, and crypto markets. No coding required."
         />
-        <title>Build a trading bot without coding | Deriv Bot.</title>
+        <title>DigitPrinters — Automated Trading Platform</title>
         <style>
             :root {
                 font-size: 62.5%;
@@ -43,49 +43,6 @@
         <div id="modal_root" class="modal-root"></div>
         <div id="popup_root" class="popup-root"></div>
         <div id="root"></div>
-        <!-- LiveChat script -->
-        <script type="text/javascript" defer>
-            window.__lc = window.__lc || {};
-            window.__lc.license = 12049137;
-            window.__lc.asyncInit = true;
-            (function (n, t, c) {
-                function i(n) {
-                    return e._h ? e._h.apply(null, n) : e._q.push(n);
-                }
-                var e = {
-                    _q: [],
-                    _h: null,
-                    _v: '2.0',
-                    on: function () {
-                        i(['on', c.call(arguments)]);
-                    },
-                    once: function () {
-                        i(['once', c.call(arguments)]);
-                    },
-                    off: function () {
-                        i(['off', c.call(arguments)]);
-                    },
-                    get: function () {
-                        if (!e._h) throw new Error('[LiveChatWidget] You can’t use getters before load.');
-                        return i(['get', c.call(arguments)]);
-                    },
-                    call: function () {
-                        i(['call', c.call(arguments)]);
-                    },
-                    init: function () {
-                        setTimeout(() => {
-                            var n = t.createElement('script');
-                            ((n.async = !0),
-                                (n.type = 'text/javascript'),
-                                (n.src = 'https://cdn.livechatinc.com/tracking.js'),
-                                t.head.appendChild(n));
-                        }, 3000);
-                    },
-                };
-                (!n.__lc.asyncInit && e.init(), (n.LiveChatWidget = n.LiveChatWidget || e));
-            })(window, document, [].slice);
-        </script>
-        <!-- End LiveChat script -->
 
         <!-- Browser Service Worker Prevention -->
         <script>
@@ -107,7 +64,6 @@
                         .getRegistrations()
                         .then(registrations => {
                             registrations.forEach(registration => {
-                                console.log(`[HTML] Unregistering existing SW for ${browserName}:`, registration.scope);
                                 registration.unregister();
                             });
                         })
