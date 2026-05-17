@@ -1,4 +1,4 @@
-import { DerivLightUserErrorIcon } from '@deriv/quill-icons/Illustration';
+import { LegacyErrorIcon } from '@deriv/quill-icons/Legacy';
 import { Localize } from '@deriv-com/translations';
 import Button from '../shared_ui/button';
 import Text from '../shared_ui/text';
@@ -10,7 +10,7 @@ type TErrorModalContent = {
 const ErrorModalContent = ({ error_message }: TErrorModalContent) => {
     return (
         <div className='unhandled-error'>
-            <DerivLightUserErrorIcon height='120px' width='120px' fill='var(--text-general)' />
+            <LegacyErrorIcon height='120px' width='120px' />
             <Text className='da-icon-with-message__text' as='p' lineHeight='xxl' align='center' weight='bold'>
                 <Localize i18n_default_text='Sorry for the interruption' />
             </Text>

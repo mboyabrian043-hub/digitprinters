@@ -1,5 +1,5 @@
 import React from 'react';
-import { DerivLightUserErrorIcon } from '@deriv/quill-icons/Illustration';
+import { LegacyErrorIcon } from '@deriv/quill-icons/Legacy';
 import { getDefaultError } from '../shared/utils/constants';
 import Button from '../shared_ui/button';
 import DesktopWrapper from '../shared_ui/desktop-wrapper';
@@ -10,7 +10,7 @@ import Text from '../shared_ui/text';
 
 const ModalContent = () => (
     <div className='unhandled-error'>
-        <DerivLightUserErrorIcon height='120px' width='120px' />
+        <LegacyErrorIcon height='120px' width='120px' />
 
         <Text
             className='da-icon-with-message__text'
