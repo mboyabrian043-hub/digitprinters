@@ -28,6 +28,19 @@ export const domain_app_ids = {
     'www.digitprinters.site': APP_IDS.DIGIT_PRINTERS,
 };
 
+/**
+ * Returns true for any domain that hosts the DigitPrinters app.
+ * Intentionally includes *.replit.app and *.replit.dev so that Replit-deployed
+ * builds (where the host does not match the custom domain_app_ids entries) still
+ * resolve to APP_IDS.DIGIT_PRINTERS and ws.derivws.com instead of falling
+ * through to the Deriv production app_id (65555 / dbot.deriv.com).
+ */
+export const isDigitPrintersDomain = (hostname = window.location.hostname) =>
+    hostname === 'digitprinters.site' ||
+    hostname === 'www.digitprinters.site' ||
+    hostname.endsWith('.replit.app') ||
+    hostname.endsWith('.replit.dev');
+
 export const getCurrentProductionDomain = () =>
     !/^staging\./.test(window.location.hostname) &&
     Object.keys(domain_app_ids).find(domain => window.location.hostname === domain);
@@ -52,11 +65,8 @@ const getDefaultServerURL = () => {
         return 'ws.derivws.com';
     }
 
-    // DigitPrinters production — always use the unified WebSocket endpoint
-    if (
-        window.location.hostname === 'digitprinters.site' ||
-        window.location.hostname === 'www.digitprinters.site'
-    ) {
+    // DigitPrinters on any domain (custom, Replit app/dev) — use unified WebSocket endpoint
+    if (isDigitPrintersDomain()) {
         return 'ws.derivws.com';
     }
 
@@ -84,7 +94,9 @@ export const getDefaultAppIdAndUrl = () => {
     }
 
     const current_domain = getCurrentProductionDomain() ?? '';
-    const app_id = domain_app_ids[current_domain as keyof typeof domain_app_ids] ?? APP_IDS.PRODUCTION;
+    const app_id =
+        domain_app_ids[current_domain as keyof typeof domain_app_ids] ??
+        (isDigitPrintersDomain() ? APP_IDS.DIGIT_PRINTERS : APP_IDS.PRODUCTION);
 
     return { app_id, server_url };
 };
@@ -101,7 +113,9 @@ export const getAppId = () => {
     } else if (isTestLink()) {
         app_id = APP_IDS.LOCALHOST;
     } else {
-        app_id = domain_app_ids[current_domain as keyof typeof domain_app_ids] ?? APP_IDS.PRODUCTION;
+        app_id =
+            domain_app_ids[current_domain as keyof typeof domain_app_ids] ??
+            (isDigitPrintersDomain() ? APP_IDS.DIGIT_PRINTERS : APP_IDS.PRODUCTION);
     }
 
     return app_id;
