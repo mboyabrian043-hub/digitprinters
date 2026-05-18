@@ -5,6 +5,11 @@ import './landing-page.scss';
 const REFERRAL_URL = 'https://partner-tracking.deriv.com/click?a=14252&o=1&c=3&link_id=1';
 const DERIV_SIGNUP_URL = 'https://deriv.com/signup/';
 
+// OAuth constants — client_id is for authorization only; app_id=134275 is ONLY for WebSocket after login
+const OAUTH_CLIENT_ID = '332LK4VWd9A4pEEfTMn53';
+const OAUTH_REDIRECT_URI = 'https://www.digitprinters.site/auth/callback';
+const OAUTH_ENDPOINT = 'https://oauth.deriv.com/oauth2/authorize';
+
 const TICKER_ITEMS = [
     { name: 'Volatility 75', value: '1,248.32', change: '+1.24%', up: true },
     { name: 'Volatility 100', value: '842.10', change: '+0.87%', up: true },
@@ -67,13 +72,35 @@ const LandingPage = () => {
 
     const handleLogin = async () => {
         setIsLoggingIn(true);
+
+        // Build the fallback OAuth URL once so we can log it before any redirect
+        const state = Math.random().toString(36).substring(2);
+        const fallbackParams = new URLSearchParams({
+            client_id: OAUTH_CLIENT_ID,
+            redirect_uri: OAUTH_REDIRECT_URI,
+            response_type: 'code',
+            scope: 'read trade payments admin trading_information',
+            state,
+        });
+        const fallbackOauthUrl = `${OAUTH_ENDPOINT}?${fallbackParams.toString()}`;
+
+        // Diagnostic console prints (requirement #9)
+        console.log('[Auth] Final OAuth URL (fallback):', fallbackOauthUrl);
+        console.log('[Auth] Final redirect_uri:', OAUTH_REDIRECT_URI);
+        console.log(
+            '[Auth] app_id injected into OAuth URL?',
+            fallbackOauthUrl.includes('app_id') ? 'YES — ERROR' : 'NO — correct'
+        );
+
         try {
+            // Primary path: OIDC via @deriv-com/auth-client (handles PKCE internally)
             await requestOidcAuthentication({
-                redirectCallbackUri: `${window.location.origin}/callback`,
+                redirectCallbackUri: OAUTH_REDIRECT_URI,
             });
         } catch (err) {
-            console.error('[Auth] OIDC failed, falling back to OAuth2:', err);
-            window.location.href = `https://oauth.deriv.com/oauth2/authorize?app_id=134275&l=en&brand=deriv`;
+            console.error('[Auth] OIDC failed, falling back to direct OAuth2 code flow:', err);
+            // Fallback: standard OAuth2 Authorization Code — client_id ONLY, no app_id
+            window.location.href = fallbackOauthUrl;
         }
     };
 

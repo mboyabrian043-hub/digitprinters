@@ -59,9 +59,9 @@ export const useOauth2 = ({
         client?.setIsLoggingOut(true);
         try {
             await OAuth2Logout({
-                redirectCallbackUri: `${window.location.origin}/callback`,
+                redirectCallbackUri: 'https://www.digitprinters.site/auth/callback',
                 WSLogoutAndRedirect: handleLogout ?? (() => Promise.resolve()),
-                postLogoutRedirectUri: window.location.origin,
+                postLogoutRedirectUri: 'https://www.digitprinters.site',
             }).catch(err => {
                 // eslint-disable-next-line no-console
                 console.error(err);
@@ -80,8 +80,8 @@ export const useOauth2 = ({
     const retriggerOAuth2Login = async () => {
         try {
             await requestOidcAuthentication({
-                redirectCallbackUri: `${window.location.origin}/callback`,
-                postLogoutRedirectUri: window.location.origin,
+                redirectCallbackUri: 'https://www.digitprinters.site/auth/callback',
+                postLogoutRedirectUri: 'https://www.digitprinters.site',
             }).catch(err => {
                 handleOidcAuthFailure(err);
             });

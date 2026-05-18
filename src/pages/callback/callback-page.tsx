@@ -42,6 +42,17 @@ const CallbackPage = () => {
     const callbackProcessed = useRef(false);
 
     useEffect(() => {
+        // Diagnostic: confirm callback reads ?code= and does NOT see app_id
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        const hasAppId = params.has('app_id');
+        console.log('[Callback] URL params received:', window.location.search);
+        console.log('[Callback] ?code present:', code ? `YES (length ${code.length})` : 'NO');
+        console.log('[Callback] app_id in callback URL?', hasAppId ? 'YES — ERROR' : 'NO — correct');
+        console.log('[Callback] redirect_uri used:', 'https://www.digitprinters.site/auth/callback');
+    }, []);
+
+    useEffect(() => {
         if (status === 'success') {
             const t = setTimeout(() => {
                 window.location.replace(window.location.origin + '/');
