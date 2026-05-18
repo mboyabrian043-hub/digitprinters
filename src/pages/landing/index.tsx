@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
+import { requestOidcAuthentication } from '@deriv-com/auth-client';
 import './landing-page.scss';
 
 const REFERRAL_URL = 'https://partner-tracking.deriv.com/click?a=14252&o=1&c=3&link_id=1';
+
+// Production redirect URI registered with Deriv OIDC client 332LK4VWd9A4pEEfTMn53
+const OAUTH_REDIRECT_URI = 'https://www.digitprinters.site/auth/callback';
 
 const TICKER_ITEMS = [
     { name: 'Volatility 75', value: '1,248.32', change: '+1.24%', up: true },
@@ -45,7 +49,7 @@ const FEATURES = [
     {
         icon: '🚀',
         title: 'Quick Strategies',
-        desc: 'Launch instantly with pre-built strategies like Martingale, D\'Alembert, and Oscar\'s Grind.',
+        desc: "Launch instantly with pre-built strategies like Martingale, D'Alembert, and Oscar's Grind.",
     },
 ];
 
@@ -62,10 +66,24 @@ const MARKETS = [
 
 const LandingPage = () => {
     const [isLoggingIn, setIsLoggingIn] = useState(false);
+    const [loginError, setLoginError] = useState('');
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
         setIsLoggingIn(true);
-        window.location.href = 'https://oauth.deriv.com/oauth2/authorize?app_id=134275&l=en&brand=deriv';
+        setLoginError('');
+        try {
+            // OIDC authorization code flow via Deriv OAuth
+            // Client ID: 332LK4VWd9A4pEEfTMn53
+            // Endpoint: https://oauth.deriv.com/oauth2/authorize
+            // Response type: code (shows consent screen)
+            await requestOidcAuthentication({
+                redirectCallbackUri: OAUTH_REDIRECT_URI,
+            });
+        } catch {
+            // Fallback to legacy OAuth if OIDC unavailable
+            window.location.href =
+                'https://oauth.deriv.com/oauth2/authorize?app_id=134275&l=en&brand=deriv';
+        }
     };
 
     const handleCreateAccount = () => {
@@ -83,7 +101,10 @@ const LandingPage = () => {
                     <span className='landing__nav-logo-text'>DigitPrinters</span>
                 </a>
                 <div className='landing__nav-actions'>
-                    <button className='landing__btn landing__btn--outline landing__btn--sm' onClick={handleCreateAccount}>
+                    <button
+                        className='landing__btn landing__btn--outline landing__btn--sm'
+                        onClick={handleCreateAccount}
+                    >
                         Create Account
                     </button>
                     <button
@@ -137,6 +158,12 @@ const LandingPage = () => {
                         DigitPrinters is a professional algorithmic trading platform built on Deriv&apos;s
                         market infrastructure — automate your strategies on synthetic indices, forex, and more.
                     </p>
+
+                    {loginError && (
+                        <div className='landing__error'>
+                            <span>⚠ {loginError}</span>
+                        </div>
+                    )}
 
                     <div className='landing__cta-group'>
                         <button

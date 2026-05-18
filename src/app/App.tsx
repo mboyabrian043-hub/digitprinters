@@ -55,7 +55,8 @@ const isUserLoggedIn = () => {
  */
 const AuthGate = () => {
     const path = window.location.pathname;
-    const isCallbackPath = path === '/callback' || path === '/auth/callback';
+    const isCallbackPath =
+        path === '/callback' || path === '/auth/callback' || path.startsWith('/auth/');
 
     // Callback pages need the full provider tree to process OAuth tokens
     if (isCallbackPath) {
@@ -89,6 +90,7 @@ const router = createBrowserRouter(
             }
         >
             <Route index element={<AppRoot />} />
+            <Route path='dashboard' element={<AppRoot />} />
             <Route path='endpoint' element={<Endpoint />} />
             <Route path='callback' element={<CallbackPage />} />
             <Route path='auth/callback' element={<CallbackPage />} />

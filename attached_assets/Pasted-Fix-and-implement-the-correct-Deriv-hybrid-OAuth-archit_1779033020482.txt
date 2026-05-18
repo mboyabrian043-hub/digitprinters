@@ -1,0 +1,106 @@
+Fix and implement the correct Deriv hybrid OAuth architecture for DigitPrinters.
+
+Production domain:
+https://www.digitpnters.site
+
+IMPORTANT:
+Do NOT use the old login URL:
+https://home.deriv.com/dashboard/login
+
+That legacy URL redirects users directly into Deriv dashboard and breaks OAuth callback handling.
+
+IMPLEMENT THIS CORRECT ARCHITECTURE:
+
+1. Use NEW Deriv OAuth authentication flow.
+
+OAuth Client ID:
+332LK4VWd9A4pEEfTMn53
+
+2. Use official OAuth authorize endpoint:
+   https://oauth.deriv.com/oauth2/authorize
+
+3. OAuth redirect URI:
+   https://www.digitpnters.site/auth/callback
+
+4. OAuth flow MUST:
+
+* show “Authorize Application”
+* show scopes/permissions
+* request user consent
+* redirect back with authorization code
+
+5. Use:
+   response_type=code
+
+6. Ensure callback URL receives:
+   ?code=...
+
+7. Create a complete AuthCallback page that:
+
+* parses authorization code
+* stores authenticated session
+* restores auth after refresh
+* redirects users to dashboard
+
+8. Use LEGACY app ID ONLY for websocket/trading compatibility:
+
+134275
+
+9. Connect websocket using:
+   wss://ws.derivws.com/websockets/v3?app_id=134275
+
+10. After successful OAuth callback:
+
+* initialize websocket
+* authorize session
+* fetch accounts
+* fetch balances
+* fetch active account
+* subscribe to synthetic indices
+* open dashboard automatically
+
+11. Support:
+
+* Volatility indices
+* Boom/Crash
+* Jump indices
+
+12. Build a professional Deriv-style dashboard including:
+
+* real/demo switcher
+* balance cards
+* sidebar navigation
+* chart container
+* trading controls
+* active trades
+* market watchlist
+
+13. Prevent:
+
+* redirect loops
+* blank pages
+* missing callback errors
+* websocket race conditions
+
+14. Add proper:
+
+* loading states
+* error handling
+* session persistence
+* protected routes
+
+15. Configure React Router and Vercel SPA rewrites correctly for:
+
+* /
+* /auth/callback
+* /dashboard
+
+16. Keep branding as:
+    DigitPrinters
+
+17. Create a modern dark trading UI similar to professional trading platforms.
+
+18. Keep referral tracking ONLY for “Create Account” using:
+    https://partner-tracking.deriv.com/click?a=14252&o=1&c=3&link_id=1
+
+19. Preserve existing working project structure where possible instead of rewriting everything unnecessarily.
